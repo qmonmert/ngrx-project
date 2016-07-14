@@ -18,10 +18,14 @@ const barrels: string[] = [
   '@angular/core',
   '@angular/common',
   '@angular/compiler',
-  '@angular/http',
-  '@angular/router',
   '@angular/platform-browser',
   '@angular/platform-browser-dynamic',
+  
+  "@ngrx/core",
+  "@ngrx/store",
+  "@ngrx/store-devtools",
+  "@ngrx/store-log-monitor",
+  "@ngrx/effects",
 
   // Thirdparty barrels.
   'rxjs',
@@ -44,6 +48,7 @@ declare var System: any;
 System.config({
   map: {
     '@angular': 'vendor/@angular',
+    '@ngrx': 'vendor/@ngrx',
     'rxjs': 'vendor/rxjs',
     'main': 'main.js'
   },
