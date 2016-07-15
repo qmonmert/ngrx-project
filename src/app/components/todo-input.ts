@@ -12,10 +12,12 @@ import {Component, Output, EventEmitter} from '@angular/core';
 })
 export class TodoInput {
     
-    @Output() addTodo : EventEmitter<string> = new EventEmitter<string>();
+    @Output() 
+    addTodo : EventEmitter<string> = new EventEmitter<string>();
 
     add(todoInput){
         this.addTodo.emit(todoInput.value);
         todoInput.value = '';
     }
+    
 }

@@ -1,9 +1,9 @@
-import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs/Observable';
-import { AppState, Todo, TodoModel } from "./../common/interfaces";
-import { ADD_TODO, REMOVE_TODO, TOGGLE_TODO } from './../common/actions';
-import { Action } from '@ngrx/store';
-import { StateUpdates, Effect, toPayload } from '@ngrx/effects';
+import {Injectable} from '@angular/core';
+import {Observable} from 'rxjs/Observable';
+import {AppState, Todo, TodoModel} from "./../common/interfaces";
+import {ADD_TODO, REMOVE_TODO, TOGGLE_TODO} from './../common/actions';
+import {Action} from '@ngrx/store';
+import {StateUpdates, Effect, toPayload} from '@ngrx/effects';
 
 @Injectable()
 export class Effects {
@@ -18,15 +18,22 @@ export class Effects {
     @Effect()
     effectAddTodoToPayload$ = this.updates$.whenAction(ADD_TODO)
                                 .map<string>(toPayload)
-                                .do(action => console.info('Effect payload:', ADD_TODO, action))
+                                .do(action => console.info('Effect payload :', ADD_TODO, action))
                                 .filter(() => false);
 
     @Effect()
     effectAddTodoToPayloadFilter$ = this.updates$.whenAction(ADD_TODO)
                                 .map<string>(toPayload)
                                 .filter((payload: any) => payload.description == 'test')
-                                .do(action => console.info('Effect payload filter:', ADD_TODO, action))
-                                .filter(() => false);                            
+                                .do(action => console.info('Effect payload filter :', ADD_TODO, action))
+                                .filter(() => false);  
+
+    @Effect()
+    effectAddTodoToPayloadMergeMap$ = this.updates$.whenAction(ADD_TODO)
+                                .map<string>(toPayload)
+                                .mergeMap((payload: any) => Observable.of(`description : ${payload.description}`))
+                                .do(text => console.info('Effect payload merge map :', ADD_TODO, text))
+                                .filter(() => false);                          
     @Effect() 
     effectRemoveTodo$ = this.updates$.whenAction(REMOVE_TODO)
                             .do(action => console.info('Effect :', REMOVE_TODO, action))

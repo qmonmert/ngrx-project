@@ -1,16 +1,15 @@
-import { Component, ChangeDetectionStrategy } from '@angular/core';
-import { TodoList } from "./components/todo-list";
-import { TodoInput } from "./components/todo-input";
-import { FilterSelect } from "./components/filter-select";
-import { Store } from '@ngrx/store';
-import { AppState, Todo, TodoModel } from "./common/interfaces";
-import { Observable } from "rxjs/Observable";
-import { ADD_TODO, REMOVE_TODO, TOGGLE_TODO } from './common/actions';
-import { StoreLogMonitorComponent } from '@ngrx/store-log-monitor';
-import { Effect, StateUpdates, toPayload } from '@ngrx/effects';
-import { Effects } from './effects/effects';
-
+import {Component, ChangeDetectionStrategy} from '@angular/core';
+import {TodoList} from "./components/todo-list";
+import {TodoInput} from "./components/todo-input";
+import {FilterSelect} from "./components/filter-select";
+import {AppState, Todo, TodoModel} from "./common/interfaces";
+import {ADD_TODO, REMOVE_TODO, TOGGLE_TODO} from './common/actions';
 import 'rxjs/Rx';
+import {Observable} from "rxjs/Observable";
+import {Store} from '@ngrx/store';
+import {StoreLogMonitorComponent} from '@ngrx/store-log-monitor';
+import {Effect, StateUpdates, toPayload} from '@ngrx/effects';
+import {Effects} from './effects/effects';
 
 @Component({
   moduleId: module.id,
