@@ -1,5 +1,5 @@
 import {Component, ChangeDetectionStrategy, Input, Output, EventEmitter} from "@angular/core";
-import {Todo, TodoModel} from "../common/interfaces";
+import {TodoModel} from "../common/interfaces";
 
 @Component({
     selector: 'todo-list',

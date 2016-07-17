@@ -4,6 +4,7 @@ import {TodoInput} from "./components/todo-input";
 import {FilterSelect} from "./components/filter-select";
 import {AppState, Todo, TodoModel} from "./common/interfaces";
 import {ADD_TODO, REMOVE_TODO, TOGGLE_TODO} from './common/actions';
+import {BEFORE_ADD_TODO, BEFORE_REMOVE_TODO, BEFORE_TOGGLE_TODO} from './common/actions';
 import 'rxjs/Rx';
 import {Observable} from "rxjs/Observable";
 import '@ngrx/core/add/operator/select';
@@ -41,32 +42,24 @@ import {Effects} from './effects/effects';
 })
 export class NgrxProjectAppComponent {
 
-	public todosModel$ : Observable<TodoModel>;
+	public todosModel$: Observable<TodoModel>;
 
 	private id: number = 0;
 	
 	constructor(private _store : Store<AppState>, effects: Effects) {
 
-		// export interface AppState {
-		// 		Todos: Todo[],
-		// 		VisibilityFilter: any
-		// }
+		// export interface AppState { Todos: Todo[], VisibilityFilter: any }
 
-		// 4 solutions :
 		const todos$ = _store.select('todos');
-		// const todos$ = _store.select<Observable<Todo[]>>('todos');
-		// const todos$ = this.getTodos_1();
-		// const todos$ = this.getTodos_2();
-
 		const visibilityFilter$ = _store.select('visibilityFilter');
+		// todos$ = _store.select<Observable<Todo[]>>('todos'); // todos$ = this.getTodos_1(); // todos$ = this.getTodos_2();
 
-		// Rx.Observable.combineLatest(...args, [resultSelector])
 		// Combine latest of todos$ and visibilityFilter$ whenever either gives a value with a selector
 		this.todosModel$ = Observable
 			.combineLatest(
 				todos$,
 				visibilityFilter$,
-				(todos : Array<Todo>, visibilityFilter : any) => {
+				(todos: Array<Todo>, visibilityFilter: any) => {
 					return {
 						filteredTodos: todos.filter(visibilityFilter),
 						totalTodos: todos.length,
@@ -76,23 +69,25 @@ export class NgrxProjectAppComponent {
 			);
 	}
 
-	// TODO: this could just as easily be done in services, or handled with ngrx/effect.
+	// Add, remove, toggle
 
 	addTodo(description: string){
-		this._store.dispatch({type: ADD_TODO, payload: {
+		this._store.dispatch({type: BEFORE_ADD_TODO, payload: {
 			id: ++this.id,
 			description,
 			complete: false
 		}});
 	}
-	
+
 	removeTodo(id: number){
-		this._store.dispatch({type: REMOVE_TODO, payload: id});
+		this._store.dispatch({type: BEFORE_REMOVE_TODO, payload: id});
 	}
 	
 	toggleTodo(id: number){
-		this._store.dispatch({type: TOGGLE_TODO, payload: id});
+		this._store.dispatch({type: BEFORE_TOGGLE_TODO, payload: id});
 	}
+
+	// Filter
 	
 	updateFilter(filter){
 		this._store.dispatch({type: filter});
