@@ -6,6 +6,7 @@ import {AppState, Todo, TodoModel} from "./common/interfaces";
 import {ADD_TODO, REMOVE_TODO, TOGGLE_TODO} from './common/actions';
 import 'rxjs/Rx';
 import {Observable} from "rxjs/Observable";
+import '@ngrx/core/add/operator/select';
 import {Store} from '@ngrx/store';
 import {StoreLogMonitorComponent} from '@ngrx/store-log-monitor';
 import {Effect, StateUpdates, toPayload} from '@ngrx/effects';
@@ -19,8 +20,8 @@ import {Effects} from './effects/effects';
 	<div id="layout" class="pure-g">
 		<div class="sidebar pure-u-1 pure-u-md-1-4">
 			<div class="header">
-				<h1 class="brand-title">NgRx Store</h1>
-				<h2 class="brand-tagline">Example #2 - Todos</h2>
+				<h1 class="brand-title">NgRx</h1>
+				<h2 class="brand-tagline">Store & Effects</h2>
 			</div>
 		</div>
 		<div class="content pure-u-1 pure-u-md-3-4">	        
@@ -42,20 +43,25 @@ export class NgrxProjectAppComponent {
 
 	public todosModel$ : Observable<TodoModel>;
 
-	//faking an id for demo purposes
 	private id: number = 0;
 	
 	constructor(private _store : Store<AppState>, effects: Effects) {
 
-		// Effects
-		// effects.effectTodo$.subscribe(_store);
+		// export interface AppState {
+		// 		Todos: Todo[],
+		// 		VisibilityFilter: any
+		// }
 
-		const todos$ = _store.select<Observable<Todo[]>>('todos');
+		// 4 solutions :
+		const todos$ = _store.select('todos');
+		// const todos$ = _store.select<Observable<Todo[]>>('todos');
+		// const todos$ = this.getTodos_1();
+		// const todos$ = this.getTodos_2();
+
 		const visibilityFilter$ = _store.select('visibilityFilter');
-		/*
-			Each time todos or visibilityFilter emits a new value, get the last emitted value from the other observable.
-			This projection could be moved into a service or exported independantly and applied with the 'let' operator.
-		*/
+
+		// Rx.Observable.combineLatest(...args, [resultSelector])
+		// Combine latest of todos$ and visibilityFilter$ whenever either gives a value with a selector
 		this.todosModel$ = Observable
 			.combineLatest(
 				todos$,
@@ -69,14 +75,11 @@ export class NgrxProjectAppComponent {
 				}
 			);
 	}
-	/*
-		All state updates occur through dispatched actions.
-		For demo purpose we are dispatching actions from container component but this could just as easily be done in services, or handled with ngrx/effect.
-		The store can also be subscribed directly to 'action streams' for the same result.
-		ex: action$.subscribe(_store)
-	*/
+
+	// TODO: this could just as easily be done in services, or handled with ngrx/effect.
+
 	addTodo(description: string){
-		return this._store.dispatch({type: ADD_TODO, payload: {
+		this._store.dispatch({type: ADD_TODO, payload: {
 			id: ++this.id,
 			description,
 			complete: false
@@ -94,4 +97,19 @@ export class NgrxProjectAppComponent {
 	updateFilter(filter){
 		this._store.dispatch({type: filter});
 	}
+
+	// Get todos
+
+	getTodos_1() {
+		return this._store.let(this.getTodosTmp_1());
+	}
+
+	getTodosTmp_1() {
+		return (state$: Observable<any>) => state$.select(s => s.todos);
+	};
+
+	getTodos_2() {
+		return this._store.let((state$: Observable<any>) => state$.select(s => s.todos));
+	}
+
 }
