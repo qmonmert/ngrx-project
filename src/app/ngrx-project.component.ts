@@ -10,8 +10,6 @@ import {Observable} from "rxjs/Observable";
 import '@ngrx/core/add/operator/select';
 import {Store} from '@ngrx/store';
 import {StoreLogMonitorComponent} from '@ngrx/store-log-monitor';
-import {Effect, StateUpdates, toPayload} from '@ngrx/effects';
-import {Effects} from './effects/effects';
 
 @Component({
   moduleId: module.id,
@@ -37,8 +35,7 @@ import {Effects} from './effects/effects';
 	</div>
 	`,
 	directives: [TodoList, TodoInput, FilterSelect, StoreLogMonitorComponent],
-	changeDetection: ChangeDetectionStrategy.OnPush,
-	providers: [Effects]
+	changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class NgrxProjectAppComponent {
 
@@ -46,15 +43,13 @@ export class NgrxProjectAppComponent {
 
 	private id: number = 0;
 	
-	constructor(private _store : Store<AppState>, effects: Effects) {
+	constructor(private _store : Store<AppState>) {
 
-		// export interface AppState { Todos: Todo[], VisibilityFilter: any }
-
-		const todos$ = _store.select('todos');
+		// todosReducer & visibilityFilter : ActionReducer
+		const todos$ = _store.select('todosReducer');
 		const visibilityFilter$ = _store.select('visibilityFilter');
-		// todos$ = _store.select<Observable<Todo[]>>('todos'); // todos$ = this.getTodos_1(); // todos$ = this.getTodos_2();
 
-		// Combine latest of todos$ and visibilityFilter$ whenever either gives a value with a selector
+		// Combine todos$ and visibilityFilter$
 		this.todosModel$ = Observable
 			.combineLatest(
 				todos$,
@@ -91,20 +86,6 @@ export class NgrxProjectAppComponent {
 	
 	updateFilter(filter){
 		this._store.dispatch({type: filter});
-	}
-
-	// Get todos
-
-	getTodos_1() {
-		return this._store.let(this.getTodosTmp_1());
-	}
-
-	getTodosTmp_1() {
-		return (state$: Observable<any>) => state$.select(s => s.todos);
-	};
-
-	getTodos_2() {
-		return this._store.let((state$: Observable<any>) => state$.select(s => s.todos));
 	}
 
 }
